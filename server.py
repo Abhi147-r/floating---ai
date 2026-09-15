@@ -5,10 +5,11 @@ Wraps the Groq calls as a small HTTP API. Deploy THIS on Render — not the
 desktop app (Tkinter/mic/OCR/tray can't run on a headless server).
 
 Endpoints:
-  GET  /health              -> {"status": "ok"}
-  POST /ask                 -> body: {"text": "...", "extra_system": ""}
+  GET  /                  -> {"app": "ABHI AI Backend", "status": "online", ...}
+  GET  /health            -> {"status": "ok"}
+  POST /ask               -> body: {"text": "...", "extra_system": ""}
                                 resp: {"answer": "..."}
-  POST /translate            -> body: {"text": "..."}
+  POST /translate         -> body: {"text": "..."}
                                 resp: {"hinglish": "...", "answer": "..."}
 
 Env vars (set these in the Render dashboard, not in code):
@@ -98,6 +99,15 @@ def _client_and_model():
     return Groq(api_key=api_key), model, None
 
 
+@app.get("/")
+def home():
+    return jsonify({
+        "app": "ABHI AI Backend",
+        "status": "online",
+        "endpoints": ["/health", "/ask", "/translate"]
+    })
+
+
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
@@ -154,7 +164,7 @@ def translate():
     if not raw_text:
         return jsonify({"error": "'text' is required"}), 400
 
-    client, primary_model, err = _client_and_model()
+    client, primary_model, err = _client_and_main_model = _client_and_model()
     if err:
         return jsonify({"error": err}), 500
 
@@ -193,5 +203,4 @@ def translate():
 
 
 if __name__ == "__main__":
-    # local test only — Render runs this via gunicorn (see Procfile)
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
