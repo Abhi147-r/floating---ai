@@ -3,21 +3,6 @@ ABHI AI — cloud backend (Render deployment)
 --------------------------------------------
 Wraps the Groq calls as a small HTTP API. Deploy THIS on Render — not the
 desktop app (Tkinter/mic/OCR/tray can't run on a headless server).
-
-Endpoints:
-  GET  /                  -> {"app": "ABHI AI Backend", "status": "online", ...}
-  GET  /health            -> {"status": "ok"}
-  POST /ask               -> body: {"text": "...", "extra_system": ""}
-                                resp: {"answer": "..."}
-  POST /translate         -> body: {"text": "..."}
-                                resp: {"hinglish": "...", "answer": "..."}
-
-Env vars (set these in the Render dashboard, not in code):
-  GROQ_API_KEY        (required) your Groq key
-  GROQ_MODEL          (optional) default "openai/gpt-oss-20b"
-  APP_SHARED_SECRET   (optional) if set, callers must send header
-                       "X-API-Key: <secret>" — protects your Groq quota
-                       from random internet traffic once the URL is public.
 """
 
 from __future__ import annotations
@@ -126,8 +111,10 @@ def ask():
     if err:
         return jsonify({"error": err}), 500
 
-    messages = [{"role": "system", "content": SYSTEM_PROMPT + "\n" + extra_system},
-                {"role": "user", "content": text}]
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT + "\n" + extra_system},
+        {"role": "user", "content": text}
+    ]
     candidates = [primary_model] + [m for m in FALLBACK_MODELS if m != primary_model]
     last_error = None
 
@@ -164,12 +151,14 @@ def translate():
     if not raw_text:
         return jsonify({"error": "'text' is required"}), 400
 
-    client, primary_model, err = _client_and_main_model = _client_and_model()
+    client, primary_model, err = _client_and_model()
     if err:
         return jsonify({"error": err}), 500
 
-    messages = [{"role": "system", "content": TRANSLATE_SYSTEM_PROMPT},
-                {"role": "user", "content": raw_text}]
+    messages = [
+        {"role": "system", "content": TRANSLATE_SYSTEM_PROMPT},
+        {"role": "user", "content": raw_text}
+    ]
     candidates = [primary_model] + [m for m in FALLBACK_MODELS if m != primary_model]
     last_error = None
 
