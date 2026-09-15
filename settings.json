@@ -1,0 +1,10 @@
+{
+  "tesseract_cmd": "",
+  "mic_device_index": null,
+  "tts_enabled": false,
+  "hotkey_enabled": true,
+  "hotkey": "<ctrl>+<alt>+space",
+  "theme": "dark",
+  "stt_language": "hi-IN",
+  "mic_sensitivity": "high"
+}

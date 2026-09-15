@@ -1,0 +1,17 @@
+# --- core ---
+groq>=0.11.0
+python-dotenv>=1.0.1
+SpeechRecognition>=3.10.4
+pyaudio>=0.2.14
+Pillow>=10.4.0
+pytesseract>=0.3.13
+
+# --- advanced (optional, app still runs without these — features degrade gracefully) ---
+pyttsx3>=2.90              # text-to-speech (speak answers aloud)
+pystray>=0.19.5             # system tray icon / minimize
+keyboard>=0.13.5            # global hotkey to show/hide window
+opencv-python-headless>=4.10.0   # better OCR image preprocessing (denoise/deskew)
+numpy>=1.26.0
+flask>=3.0.3
+gunicorn>=22.0.0
+groq>=0.11.0

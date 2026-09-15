@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: abhi-ai-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # set manually in Render dashboard — don't commit it
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: APP_SHARED_SECRET
+        sync: false          # optional — set to any random string to lock the API down
